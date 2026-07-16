@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Silver Hospital AI</title>
+
+<style>
+
+#miniMap{
+
+position:absolute;
+
+right:20px;
+top:20px;
+
+width:220px;
+height:220px;
+
+background:white;
+
+border:5px solid black;
+
+border-radius:20px;
+
+z-index:20;
+
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:"Arial",sans-serif;
+    background:#eef6ff;
+}
+
+
+#main{
+    max-width:900px;
+    margin:auto;
+    padding:30px;
+}
+
+
+h1{
+    text-align:center;
+    font-size:42px;
+    color:#1565c0;
+}
+
+
+.card{
+
+    background:white;
+    border-radius:25px;
+    padding:30px;
+    margin-bottom:25px;
+    box-shadow:0 5px 15px #ccc;
+
+}
+
+
+h2{
+    font-size:30px;
+}
+
+
+
+.selectBox{
+
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+
+}
+
+
+
+.option{
+
+    width:180px;
+    height:100px;
+
+    background:#f1f5fa;
+
+    border-radius:20px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    font-size:24px;
+
+    cursor:pointer;
+
+    border:4px solid transparent;
+
+    user-select:none;
+
+}
+
+
+
+.option:hover{
+
+    border-color:#2196f3;
+
+}
+
+
+
+.selected{
+
+    background:#bbdefb;
+
+    border-color:#1565c0;
+
+}
+
+
+
+button{
+
+    width:100%;
+
+    padding:20px;
+
+    border:none;
+
+    border-radius:20px;
+
+    background:#1565c0;
+
+    color:white;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+}
+
+
+
+#result{
+
+    font-size:24px;
+
+    line-height:1.8;
+
+}
+
+
+
+#game{
+
+    display:none;
+
+    width:100%;
+
+    height:700px;
+
+}
+
+
+
+.info{
+
+    position:absolute;
+
+    top:20px;
+
+    left:20px;
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:20px;
+
+    font-size:20px;
+
+    z-index:10;
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+<div id="main">
+
+
+<h1>
+🏥 실버 병원 길 안내 AI
+</h1>
+
+
+
+<div class="card">
+
+<h2>
+1. 나이를 선택하세요
+</h2>
+
+
+<div class="selectBox">
+
+<div class="option age"
+onclick="selectAge(this,60)">
+👴<br>60대
+</div>
+
+
+<div class="option age"
+onclick="selectAge(this,70)">
+👵<br>70대
+</div>
+
+
+<div class="option age"
+onclick="selectAge(this,80)">
+🧓<br>80대 이상
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="card">
+
+<h2>
+2. 불편한 곳 선택
+</h2>
+
+
+<div class="selectBox">
+
+
+<div class="option symptom"
+onclick="selectSymptom(this,'무릎')">
+🦵<br>무릎
+</div>
+
+
+
+<div class="option symptom"
+onclick="selectSymptom(this,'허리')">
+🦴<br>허리
+</div>
+
+
+
+<div class="option symptom"
+onclick="selectSymptom(this,'눈')">
+👁️<br>눈
+</div>
+
+
+
+<div class="option symptom"
+onclick="selectSymptom(this,'걷기')">
+🚶<br>걷기 어려움
+</div>
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="card">
+
+
+<h2>
+3. 이동 방법
+</h2>
+
+
+<div class="selectBox">
+
+
+<div class="option mobility"
+onclick="selectMobility(this,'보행')">
+🚶<br>걸어서 이동
+</div>
+
+
+
+<div class="option mobility"
+onclick="selectMobility(this,'지팡이')">
+🦯<br>지팡이
+</div>
+
+
+
+<div class="option mobility"
+onclick="selectMobility(this,'휠체어')">
+♿<br>휠체어
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="card">
+
+
+<h2>
+4. 우선 기준
+</h2>
+
+
+<div class="selectBox">
+
+
+<div class="option priority selected"
+onclick="selectPriority(this,'안전')">
+
+⭐<br>안전 우선
+
+</div>
+
+
+
+<div class="option priority"
+onclick="selectPriority(this,'거리')">
+
+📍<br>거리 우선
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<button onclick="recommend()">
+🏥 맞춤 병원 추천
+</button>
+
+
+
+
+
+<div class="card">
+
+<h2>
+추천 결과
+</h2>
+
+
+<div id="result">
+
+정보를 선택해주세요.
+
+</div>
+
+
+<br>
+
+
+<button onclick="start3D()">
+
+🚶 병원까지 3D 체험
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div id="game">
+
+<div class="info">
+
+WASD : 이동<br>
+마우스 : 시점 변경<br>
+🚦 신호 확인<br>
+🏥 병원으로 이동
+
+</div>
+
+
+<canvas id="miniMap"></canvas>
+
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/PointerLockControls.js"></script>
+
+
+<script>
+
+
+let age=70;
+
+let symptom="";
+
+let mobility="";
+
+let priority="안전";
+
+
+
+function selectAge(el,value){
+
+document.querySelectorAll(".age")
+.forEach(
+x=>x.classList.remove("selected")
+);
+
+el.classList.add("selected");
+
+age=value;
+
+}
+
+
+
+
+
+function selectSymptom(el,value){
+
+document.querySelectorAll(".symptom")
+.forEach(
+x=>x.classList.remove("selected")
+);
+
+
+el.classList.add("selected");
+
+symptom=value;
+
+}
+
+
+
+
+
+function selectMobility(el,value){
+
+document.querySelectorAll(".mobility")
+.forEach(
+x=>x.classList.remove("selected")
+);
+
+
+el.classList.add("selected");
+
+mobility=value;
+
+}
+
+
+
+
+
+function selectPriority(el,value){
+
+document.querySelectorAll(".priority")
+.forEach(
+x=>x.classList.remove("selected")
+);
+
+
+el.classList.add("selected");
+
+priority=value;
+
+}
+
+// ==========================
+// 병원 추천 알고리즘
+// ==========================
+
+let hospitalName="";
+
+function recommend(){
+
+
+let score=80;
+
+let reasons=[];
+
+if(symptom=="눈"){
+
+hospitalName="밝은안과";
+
+}
+else if(symptom=="무릎"){
+
+hospitalName="행복정형외과";
+
+}
+else if(symptom=="허리"){
+
+hospitalName="척추재활병원";
+
+}
+else if(symptom=="걷기"){
+
+hospitalName="실버재활센터";
+
+}
+else{
+
+hospitalName="종합병원";
+
+}
+
+if(age>=70){
+
+score+=5;
+
+reasons.push("고령자 맞춤 진료 가능");
+
+}
+
+
+
+if(symptom=="무릎" || symptom=="허리"){
+
+score+=5;
+
+reasons.push("재활 치료 시설 보유");
+
+}
+
+
+
+if(symptom=="걷기"){
+
+score+=5;
+
+reasons.push("휴식 공간이 많은 경로");
+
+}
+
+
+
+if(mobility=="휠체어"){
+
+score+=10;
+
+reasons.push("휠체어 이동 가능");
+
+}
+
+
+
+if(priority=="안전"){
+
+reasons.push("계단 없는 안전 경로");
+
+}
+
+else{
+
+reasons.push("최단 거리 경로");
+
+}
+
+
+
+document.getElementById("result").innerHTML=
+
+`
+
+🏥 <b>${hospitalName}</b>
+
+<br><br>
+
+⭐ 추천 점수 : ${score}점
+
+<br><br>
+
+
+선택 정보
+
+<br>
+
+나이 : ${age}대
+
+<br>
+
+불편 : ${symptom}
+
+<br>
+
+이동 방식 : ${mobility}
+
+<br>
+
+
+<br>
+
+추천 이유
+
+<br>
+
+✔ ${reasons.join("<br>✔ ")}
+
+
+<br><br>
+
+
+거리 : 650m
+
+<br>
+
+예상 시간 : 10분
+
+<br>
+
+🚶 3D 체험에서 실제 이동 가능
+
+`;
+
+}
+
+
+
+
+
+// ==========================
+// 3D 시스템
+// ==========================
+
+let player;
+
+let scene;
+
+let camera;
+
+let renderer;
+
+let controls;
+
+let hospital;
+
+let keys={};
+
+let canCross=false;
+let trafficState="red";
+let redLight;
+
+let arrow;
+
+let arrived = false;
+
+function updateMiniMap(){
+
+
+if(!mapCtx) return;
+
+
+mapCtx.clearRect(
+0,
+0,
+220,
+220
+);
+
+
+// 도로
+
+mapCtx.fillStyle="gray";
+
+mapCtx.fillRect(
+100,
+0,
+20,
+220
+);
+
+
+
+// 플레이어
+
+mapCtx.fillStyle="blue";
+
+mapCtx.beginPath();
+
+mapCtx.arc(
+110 + controls.getObject().position.x,
+110 - controls.getObject().position.z,
+8,
+0,
+Math.PI*2
+);
+mapCtx.fill();
+
+
+
+// 병원
+
+mapCtx.fillStyle="red";
+
+mapCtx.fillRect(
+100,
+20,
+20,
+20
+);
+
+
+
+}
+
+let mapCanvas;
+let mapCtx;
+
+function start3D(){
+
+
+document.getElementById("main").style.display="none";
+
+
+document.getElementById("game").style.display="block";
+
+
+
+scene=new THREE.Scene();
+
+
+scene.background=
+new THREE.Color(0x87ceeb);
+
+let ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(300,300),
+    new THREE.MeshLambertMaterial({
+        color:0x7ec850
+    })
+);
+
+ground.rotation.x=-Math.PI/2;
+
+scene.add(ground);
+
+
+
+
+camera=new THREE.PerspectiveCamera(
+
+75,
+
+window.innerWidth/700,
+
+0.1,
+
+1000
+
+);
+
+
+
+
+
+renderer=new THREE.WebGLRenderer({
+
+antialias:true
+
+});
+
+
+renderer.setSize(
+
+window.innerWidth,
+
+700
+
+);
+
+
+
+document
+.getElementById("game")
+.appendChild(renderer.domElement);
+
+
+
+
+
+controls=new THREE.PointerLockControls(
+
+camera,
+
+document.body
+
+);
+
+
+
+scene.add(
+
+controls.getObject()
+
+);
+
+
+
+camera.position.y=2;
+
+
+
+
+
+function createMiniMap(){
+
+mapCanvas=document.getElementById("miniMap");
+
+mapCtx=mapCanvas.getContext("2d");
+
+
+mapCanvas.width=220;
+mapCanvas.height=220;
+
+
+}
+
+
+
+
+// ==========================
+// 바닥
+// ==========================
+
+
+let ground=new THREE.Mesh(
+
+new THREE.BoxGeometry(
+
+120,
+
+1,
+
+120
+
+),
+
+new THREE.MeshLambertMaterial({
+
+color:0x5cab45
+
+})
+
+);
+
+
+
+ground.position.y=-0.5;
+
+
+scene.add(ground);
+
+// ==========================
+// 플레이어 캐릭터
+// ==========================
+
+
+player = new THREE.Mesh(
+    new THREE.BoxGeometry(
+        1,
+        2,
+        1
+    ),
+    new THREE.MeshBasicMaterial({
+        color:0x0000ff
+    })
+);
+
+player.position.y = 1;
+scene.add(player);
+
+
+player.position.y=1;
+
+
+scene.add(player);
+
+
+
+// ==========================
+// 도로
+// ==========================
+
+
+let road=new THREE.Mesh(
+
+new THREE.BoxGeometry(
+
+12,
+
+0.1,
+
+120
+
+),
+
+new THREE.MeshLambertMaterial({
+
+color:0x333333
+
+})
+
+);
+
+
+
+scene.add(road);
+
+
+
+
+
+// ==========================
+// 횡단보도
+// ==========================
+
+
+for(let i=0;i<8;i++){
+
+
+let cross=new THREE.Mesh(
+
+new THREE.BoxGeometry(
+
+12,
+
+0.12,
+
+1
+
+),
+
+new THREE.MeshBasicMaterial({
+
+color:0xffffff
+
+})
+
+);
+
+
+cross.position.z=-25+(i*2);
+
+
+cross.position.y=0.1;
+
+
+scene.add(cross);
+
+
+}
+
+
+
+
+
+// ==========================
+// 신호등
+// ==========================
+
+
+let pole=new THREE.Mesh(
+
+new THREE.BoxGeometry(
+
+0.3,
+
+6,
+
+0.3
+
+),
+
+new THREE.MeshBasicMaterial({
+
+color:0x222222
+
+})
+
+);
+
+
+
+pole.position.set(
+
+8,
+
+3,
+
+-25
+
+);
+
+
+scene.add(pole);
+
+
+
+
+
+redLight = new THREE.Mesh(
+
+new THREE.SphereGeometry(
+
+0.6,
+
+20,
+
+20
+
+),
+
+new THREE.MeshBasicMaterial({
+
+color:0xff0000
+
+})
+
+);
+
+
+
+redLight.position.set(
+
+8,
+
+5,
+
+-25
+
+);
+
+
+
+scene.add(redLight);
+
+setInterval(()=>{
+
+if(trafficState=="red"){
+
+trafficState="green";
+canCross=true;
+
+redLight.material.color.set(0x00ff00);
+
+}
+
+else{
+
+trafficState="red";
+canCross=false;
+
+redLight.material.color.set(0xff0000);
+
+}
+
+},5000);
+
+
+
+
+
+
+// ==========================
+// 병원 건물
+// ==========================
+
+
+hospital = new THREE.Mesh(
+
+new THREE.BoxGeometry(
+
+14,
+
+14,
+
+14
+
+),
+
+new THREE.MeshLambertMaterial({
+
+color:0xffffff
+
+})
+
+);
+
+
+
+hospital.position.set(
+
+0,
+
+7,
+
+-90
+
+);
+
+
+
+scene.add(hospital);
+let arrowGeo =
+new THREE.ConeGeometry(
+1,
+4,
+20
+);
+
+
+let arrowMat =
+new THREE.MeshBasicMaterial({
+color:0xffff00
+});
+
+
+arrow =
+new THREE.Mesh(
+arrowGeo,
+arrowMat
+);
+
+
+arrow.position.set(
+0,
+20,
+-90
+);
+
+arrow.rotation.x=Math.PI;
+
+scene.add(arrow);
+
+
+
+
+// 병원 표시
+
+
+let hospitalMark=new THREE.Mesh(
+
+new THREE.BoxGeometry(
+
+6,
+
+2,
+
+0.2
+
+),
+
+new THREE.MeshBasicMaterial({
+
+color:0xff0000
+
+})
+
+);
+
+
+hospitalMark.position.set(
+
+0,
+
+10,
+
+-83
+
+);
+
+
+scene.add(hospitalMark);
+
+
+
+
+
+// ==========================
+// 주변 건물
+// ==========================
+
+
+
+for(let i=0;i<20;i++){
+
+let x = Math.random()*50 - 25;
+
+if(Math.abs(x) < 10){
+    continue;
+}
+
+let h = Math.random()*12 + 5;
+
+let building = new THREE.Mesh(
+    new THREE.BoxGeometry(6,h,6),
+    new THREE.MeshLambertMaterial({
+        color:0xbdbdbd
+    })
+);
+
+building.position.set(
+    x,
+    h/2,
+    Math.random()*-100
+);
+
+scene.add(building);
+}
+
+new THREE.BoxGeometry(
+
+6,
+
+h,
+
+6
+
+),
+
+new THREE.MeshLambertMaterial({
+
+color:0xbdbdbd
+
+})
+
+);
+
+
+
+building.position.set(
+
+Math.random()*50-25,
+
+h/2,
+
+Math.random()*-100
+
+);
+
+
+
+scene.add(building);
+
+
+}
+
+// ==========================
+// 나무 생성
+// ==========================
+
+
+for(let i=0;i<30;i++){
+
+
+let trunk=new THREE.Mesh(
+
+new THREE.CylinderGeometry(
+0.4,
+0.4,
+3
+),
+
+new THREE.MeshBasicMaterial({
+color:0x8b4513
+})
+
+);
+
+
+let leaf=new THREE.Mesh(
+
+new THREE.SphereGeometry(
+2,
+16,
+16
+),
+
+new THREE.MeshBasicMaterial({
+color:0x228b22
+})
+
+);
+
+
+
+let x=Math.random()*60-30;
+
+let z=Math.random()*-100;
+
+
+trunk.position.set(
+x,
+1.5,
+z
+);
+
+
+leaf.position.set(
+x,
+4,
+z
+);
+
+
+scene.add(trunk);
+
+scene.add(leaf);
+
+
+}
+
+
+
+
+
+// ==========================
+// 휴식 벤치
+// ==========================
+
+
+let benchSeat=new THREE.Mesh(
+
+new THREE.BoxGeometry(
+5,
+0.3,
+1
+),
+
+new THREE.MeshBasicMaterial({
+color:0x8b4513
+})
+
+);
+
+
+benchSeat.position.set(
+-8,
+1,
+-45
+);
+
+
+scene.add(benchSeat);
+
+
+
+
+// ==========================
+// 경사로
+// ==========================
+
+
+let ramp=new THREE.Mesh(
+
+new THREE.BoxGeometry(
+5,
+0.3,
+15
+),
+
+new THREE.MeshBasicMaterial({
+color:0xaaaaaa
+})
+
+);
+
+
+ramp.rotation.x=-0.2;
+
+
+ramp.position.set(
+-8,
+0.3,
+-70
+);
+
+
+scene.add(ramp);
+
+
+
+
+// ==========================
+// 계단
+// ==========================
+
+
+if(mobility!="휠체어"){
+
+
+for(let i=0;i<5;i++){
+
+
+let stair=new THREE.Mesh(
+
+new THREE.BoxGeometry(
+6,
+0.4+i*0.2,
+2
+),
+
+new THREE.MeshBasicMaterial({
+color:0x777777
+})
+
+);
+
+
+
+stair.position.set(
+
+12,
+
+0.2+i*0.2,
+
+-60-i*2
+
+);
+
+
+
+scene.add(stair);
+
+
+}
+
+
+}
+
+// 휠체어 사용자 경사로 안내
+
+if(mobility=="휠체어"){
+
+    arrow.position.set(
+        -8,
+        10,
+        -70
+    );
+
+}
+
+// 조명
+
+let light=new THREE.AmbientLight(
+0xffffff
+);
+
+
+scene.add(light);
+
+
+
+// 시작 위치
+
+controls.getObject().position.set(
+0,
+2,
+10
+);
+
+
+createMiniMap();
+animate();
+
+
+}
+
+
+
+
+
+// ==========================
+// 이동
+// ==========================
+
+
+document.addEventListener(
+
+"keydown",
+
+function(e){
+
+keys[e.code]=true;
+
+}
+
+);
+
+
+
+document.addEventListener(
+
+"keyup",
+
+function(e){
+
+keys[e.code]=false;
+
+}
+
+);
+
+
+
+
+
+function animate(){
+
+
+requestAnimationFrame(
+animate
+);
+
+
+
+if(controls){
+
+
+let speed=0.3;
+
+
+
+let pos = controls.getObject().position;
+
+if(keys["KeyW"]){
+
+    let nextZ = pos.z - speed;
+
+    if(
+        trafficState=="red" &&
+        nextZ < -18 &&
+        nextZ > -35
+    ){
+        // 정지
+    }
+    else{
+        controls.moveForward(speed);
+    }
+}
+
+if(keys["KeyS"]){
+
+controls.moveForward(-speed);
+
+}
+
+
+
+if(keys["KeyA"]){
+
+controls.moveRight(-speed);
+
+}
+
+
+
+if(keys["KeyD"]){
+
+controls.moveRight(speed);
+
+}
+
+if(player){
+
+player.position.x =
+controls.getObject().position.x;
+
+player.position.z =
+controls.getObject().position.z;
+
+}
+
+}
+
+
+
+if(arrow){
+
+arrow.rotation.y +=0.03;
+
+}
+
+
+renderer.render(
+scene,
+camera
+);
+
+// 병원 도착 확인
+
+let px = controls.getObject().position.x;
+let pz = controls.getObject().position.z;
+
+let dx = px - hospital.position.x;
+let dz = pz - hospital.position.z;
+
+let dist = Math.sqrt( 
+dx*dx + dz*dz
+);
+
+if(dist < 10 && !arrived){
+
+    arrived = true;
+
+    alert(
+        hospitalName + "에 도착했습니다!"
+    );
+
+    location.reload();
+}
+
+updateMiniMap();
+
+
+}
+
+// ==========================
+// 음성 안내
+// ==========================
+
+
+function voiceGuide(){
+
+
+let msg=new SpeechSynthesisUtterance();
+
+
+msg.text=
+"앞으로 이동하세요. 횡단보도 앞에서는 신호를 확인하세요.";
+
+
+msg.lang="ko-KR";
+
+
+speechSynthesis.speak(msg);
+
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
