@@ -865,37 +865,6 @@ mapCanvas.height=220;
 
 
 
-// ==========================
-// 바닥
-// ==========================
-
-
-let ground=new THREE.Mesh(
-
-new THREE.BoxGeometry(
-
-120,
-
-1,
-
-120
-
-),
-
-new THREE.MeshLambertMaterial({
-
-color:0x5cab45
-
-})
-
-);
-
-
-
-ground.position.y=-0.5;
-
-
-scene.add(ground);
 
 // ==========================
 // 플레이어 캐릭터
@@ -1255,42 +1224,7 @@ building.position.set(
 scene.add(building);
 }
 
-new THREE.BoxGeometry(
 
-6,
-
-h,
-
-6
-
-),
-
-new THREE.MeshLambertMaterial({
-
-color:0xbdbdbd
-
-})
-
-);
-
-
-
-building.position.set(
-
-Math.random()*50-25,
-
-h/2,
-
-Math.random()*-100
-
-);
-
-
-
-scene.add(building);
-
-
-}
 
 // ==========================
 // 나무 생성
